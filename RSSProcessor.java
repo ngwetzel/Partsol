@@ -4,7 +4,6 @@ import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,8 +15,10 @@ import java.util.List;
 @SpringBootApplication
 public class RSSProcessor {
     private static final String POSTGRES_URL = "jdbc:postgresql://localhost:5432/rssdata";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "postgres1";
+    @Value("${spring.datasource.username")
+    private static  String USERNAME;
+    @Value("${spring.datasource.password")
+    private static String PASSWORD ;
     public static void main(String[] args) {
         String feedUrl = "https://feeds.bbci.co.uk/news/world/rss.xml";
         // Replace with your RSS feed URL
@@ -27,6 +28,7 @@ public class RSSProcessor {
              SyndFeedInput input = new SyndFeedInput();
              SyndFeed feed = input.build(new XmlReader(url));
              //Connect to the database
+
              Connection connection = DriverManager.getConnection(POSTGRES_URL, USERNAME, PASSWORD);
              //Insert feed entries into the database
             String sql = "INSERT INTO rss_entries (title, link, description, published_date) VALUES (?, ?, ?, ?)";
